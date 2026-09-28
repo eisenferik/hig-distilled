@@ -1,0 +1,286 @@
+/* ============================================================================
+   apple-tokens.css — an "Apple look" design-token kit for the web
+   ----------------------------------------------------------------------------
+   Starting CSS custom properties + a few control recipes that approximate Apple's
+   current (Liquid Glass-era) visual system on the web. The typography ramp, system
+   colors, control heights and hit targets are the HIG's; the rest are overridable.
+
+   Fidelity note: SF Pro and SF Symbols are not freely embeddable on the web. The
+   font stack below renders the real San Francisco on Apple devices and a close
+   fallback elsewhere. System color hexes are the well-established iOS values used
+   as design-time reference (Apple ships them via APIs, not fixed web values), so
+   treat them as a faithful approximation, not an exact match.
+
+   Usage: define the required color pairs, put your app inside a container,
+   and build with the
+   variables (e.g. `background: var(--bg); color: var(--label); font: var(--font-body)`).
+   Dark mode works automatically via prefers-color-scheme, and can be forced with
+   `<html data-theme="dark">` / `"light"`.
+   ============================================================================ */
+
+:root {
+  /* ---- Type families ---------------------------------------------------- */
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+               system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-serif: ui-serif, "New York", Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-rounded: ui-rounded, "SF Pro Rounded", var(--font-sans);
+
+  /* ---- Type ramp (iOS text styles: size / line-height / weight) ---------
+     Sizes in rem (= pt ÷ 16) so text honors the user's size setting; line-heights
+     unitless so they scale too. Body ≈ 1.0625rem (17px) reads as Apple. */
+  --font-large-title: 400 2.125rem/1.21 var(--font-sans);
+  --font-title1:      400 1.75rem/1.21 var(--font-sans);
+  --font-title2:      400 1.375rem/1.27 var(--font-sans);
+  --font-title3:      400 1.25rem/1.25 var(--font-sans);
+  --font-headline:    600 1.0625rem/1.29 var(--font-sans);
+  --font-body:        400 1.0625rem/1.29 var(--font-sans);
+  --font-callout:     400 1rem/1.31 var(--font-sans);
+  --font-subhead:     400 0.9375rem/1.33 var(--font-sans);
+  --font-footnote:    400 0.8125rem/1.38 var(--font-sans);
+  --font-caption1:    400 0.75rem/1.33 var(--font-sans);
+  --font-caption2:    400 0.6875rem/1.18 var(--font-sans);
+  /* System letter-spacing is optically tuned per point size: -0.026em body 17pt, +0.012em large title 34pt */
+  --tracking-body: -0.026em;
+  --tracking-title: 0.012em;
+
+  /* ---- Spacing ----------------------------------------------------------- */
+  --space-1: 8px;
+  --space-2: 16px;   /* default screen margin on phones */
+  --screen-margin: var(--space-2);
+
+  /* ---- Corner radii ------------------------------------------------------
+     Apple corners are "continuous" (squircle); border-radius approximates them.
+     Keep nested radii concentric: outer = inner + gap. */
+  --radius-md: 10px;  /* buttons, text fields */
+  --radius-lg: 12px;  /* cards, grouped list container */
+  --radius-sheet: 10px;
+  --radius-pill: 999px;
+  --hairline: 1px;      /* split-views: "the thin divider measures one point in width" */
+
+  /* ---- Hit targets ------------------------------------------------------- */
+  --target-min: 44px; /* minimum comfortable touch target */
+
+  /* ---- Elevation / shadows (tiered, soft, single light source from above) */
+  --shadow-raised: 0 1px 2px rgba(0,0,0,0.06), 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-overlay: 0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-modal: 0 20px 60px rgba(0,0,0,0.20);
+
+  /* ---- Motion (brief, gentle, gesture-consistent) ----------------------- */
+  --ease-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --dur-fast: 200ms;
+
+  /* ---- Accent palette (light) — system colors -------------------------- */
+  --blue:   #007AFF;  --green:  #34C759;  --indigo: #5856D6;  --orange: #FF9500;
+  --pink:   #FF2D55;  --purple: #AF52DE;  --red:    #FF3B30;  --teal:   #30B0C7;
+  --cyan:   #32ADE6;  --mint:   #00C7BE;  --yellow: #FFCC00;  --brown:  #A2845E;
+  /* Define --accent and --accent-contrast as a measured pair. */
+
+  /* ---- Semantic colors (light) — defined by ROLE, not hue --------------- */
+  --label:            rgba(0,0,0,1);
+  /* Define --label-secondary against its actual background. */
+  --label-tertiary:   rgba(60,60,67,0.30);
+  --label-quaternary: rgba(60,60,67,0.18);
+  --placeholder:      rgba(60,60,67,0.30);
+  --link:             var(--accent);
+
+  --separator:        rgba(60,60,67,0.29);   /* translucent */
+  --separator-opaque: #C6C6C8;
+
+  --bg:            #FFFFFF;   /* systemBackground */
+  --bg-secondary:  #F2F2F7;   /* secondarySystemBackground */
+  --bg-tertiary:   #FFFFFF;   /* tertiarySystemBackground */
+  --bg-grouped:            #F2F2F7;  /* grouped list page background */
+  --bg-grouped-secondary:  #FFFFFF;  /* grouped list rows */
+  --bg-grouped-tertiary:   #F2F2F7;
+
+  --fill:            rgba(120,120,128,0.20);  /* thin control fills */
+  --fill-secondary:  rgba(120,120,128,0.16);
+  --fill-tertiary:   rgba(118,118,128,0.12);
+  --fill-quaternary: rgba(116,116,128,0.08);
+
+  --gray:  #8E8E93; --gray2: #AEAEB2; --gray3: #C7C7CC;
+  --gray4: #D1D1D6; --gray5: #E5E5EA; --gray6: #F2F2F7;
+
+  /* ---- Materials (Liquid Glass-ish chrome) ------------------------------
+     Use ONLY on the functional layer (bars, sidebars, toolbars) — not content. */
+  --material-chrome-bg: rgba(255,255,255,0.72);
+  --material-blur: saturate(180%) blur(20px);
+}
+
+/* Dark mode — semantic roles RE-MAP (not an inversion); re-check contrast ---- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --blue: #0A84FF; --green: #30D158; --indigo: #5E5CE6; --orange: #FF9F0A;
+    --pink: #FF375F; --purple: #BF5AF2; --red: #FF453A; --teal: #40C8E0;
+    --cyan: #64D2FF; --mint: #63E6E2; --yellow: #FFD60A; --brown: #AC8E68;
+    --label:            rgba(255,255,255,1);
+    --label-tertiary:   rgba(235,235,245,0.30);
+    --label-quaternary: rgba(235,235,245,0.18);
+    --placeholder:      rgba(235,235,245,0.30);
+
+    --separator:        rgba(84,84,88,0.60);
+    --separator-opaque: #38383A;
+
+    /* Elevation in dark UIs is signaled by LIGHTER surfaces, not shadow */
+    --bg:            #000000;
+    --bg-secondary:  #1C1C1E;
+    --bg-tertiary:   #2C2C2E;
+    --bg-grouped:            #000000;
+    --bg-grouped-secondary:  #1C1C1E;
+    --bg-grouped-tertiary:   #2C2C2E;
+
+    --fill:            rgba(120,120,128,0.36);
+    --fill-secondary:  rgba(120,120,128,0.32);
+    --fill-tertiary:   rgba(118,118,128,0.24);
+    --fill-quaternary: rgba(118,118,128,0.18);
+
+    --gray: #8E8E93; --gray2: #636366; --gray3: #48484A;
+    --gray4: #3A3A3C; --gray5: #2C2C2E; --gray6: #1C1C1E;
+
+    --material-chrome-bg: rgba(30,30,30,0.72);
+
+    --shadow-raised: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-overlay: 0 8px 30px rgba(0,0,0,0.5);
+  }
+}
+/* Explicit dark override (viewer toggles data-theme) */
+:root[data-theme="dark"] {
+  --blue: #0A84FF; --green: #30D158; --indigo: #5E5CE6; --orange: #FF9F0A;
+  --pink: #FF375F; --purple: #BF5AF2; --red: #FF453A; --teal: #40C8E0;
+  --cyan: #64D2FF; --mint: #63E6E2; --yellow: #FFD60A; --brown: #AC8E68;
+  --label: rgba(255,255,255,1);
+  --label-tertiary: rgba(235,235,245,0.30); --label-quaternary: rgba(235,235,245,0.18);
+  --placeholder: rgba(235,235,245,0.30);
+  --separator: rgba(84,84,88,0.60); --separator-opaque: #38383A;
+  --bg: #000000; --bg-secondary: #1C1C1E; --bg-tertiary: #2C2C2E;
+  --bg-grouped: #000000; --bg-grouped-secondary: #1C1C1E; --bg-grouped-tertiary: #2C2C2E;
+  --fill: rgba(120,120,128,0.36); --fill-secondary: rgba(120,120,128,0.32);
+  --fill-tertiary: rgba(118,118,128,0.24); --fill-quaternary: rgba(118,118,128,0.18);
+  --gray2: #636366; --gray3: #48484A; --gray4: #3A3A3C; --gray5: #2C2C2E; --gray6: #1C1C1E;
+  --material-chrome-bg: rgba(30,30,30,0.72);
+  --shadow-raised: 0 1px 2px rgba(0,0,0,0.4);
+  --shadow-overlay: 0 8px 30px rgba(0,0,0,0.5);
+}
+
+/* ============================================================================
+   Optional base + control recipes — the "Apple feel" starter. Adapt freely.
+   ============================================================================ */
+
+body {
+  font: var(--font-body);
+  letter-spacing: var(--tracking-body);
+  color: var(--label);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Type utilities */
+.large-title { font: var(--font-large-title); letter-spacing: var(--tracking-title); }
+.title1 { font: var(--font-title1); } .title2 { font: var(--font-title2); }
+.title3 { font: var(--font-title3); } .headline { font: var(--font-headline); }
+.body { font: var(--font-body); } .callout { font: var(--font-callout); }
+.subhead { font: var(--font-subhead); } .footnote { font: var(--font-footnote); color: var(--label-secondary); }
+.caption { font: var(--font-caption1); color: var(--label-secondary); }
+
+/* Buttons — one prominent (filled) action per view; others tinted/plain/gray */
+.btn {
+  font: var(--font-body); font-weight: 600; letter-spacing: var(--tracking-body);
+  min-height: var(--target-min); padding: 0 18px;
+  border: none; border-radius: var(--radius-md); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  transition: filter var(--dur-fast) var(--ease-standard),
+              opacity var(--dur-fast) var(--ease-standard),
+              background var(--dur-fast) var(--ease-standard);
+}
+.btn:active { filter: brightness(0.92); }
+.btn:disabled { opacity: 0.35; cursor: default; }
+.btn-filled { background: var(--accent); color: var(--accent-contrast); }
+.btn-tinted { background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+.btn-gray   { background: var(--fill); color: var(--label); }
+.btn-plain  { background: transparent; color: var(--accent); padding: 4px 8px; }
+.btn-destructive { background: var(--red); color: #fff; }
+.btn-pill { border-radius: var(--radius-pill); }
+
+/* Text fields */
+.field {
+  font: var(--font-body); color: var(--label);
+  min-height: var(--target-min); padding: 10px 12px;
+  background: var(--bg); border: var(--hairline) solid var(--separator-opaque);
+  border-radius: var(--radius-md); width: 100%;
+}
+.field::placeholder { color: var(--placeholder); }
+
+/* Inset grouped list (the classic iOS Settings look) */
+.list-grouped { background: var(--bg-grouped); padding: var(--space-2) 0; }
+.list-grouped .group {
+  background: var(--bg-grouped-secondary); border-radius: var(--radius-lg);
+  margin: 0 var(--screen-margin); overflow: hidden;
+}
+.list-grouped .row {
+  display: flex; align-items: center; gap: 12px;
+  min-height: var(--target-min); padding: 11px var(--space-2);
+  font: var(--font-body); color: var(--label);
+}
+.list-grouped .row + .row { box-shadow: inset 0 var(--hairline) 0 var(--separator); }
+.list-grouped .row .value { margin-left: auto; color: var(--label-secondary); }
+
+/* Card */
+.card {
+  background: var(--bg-secondary); border-radius: var(--radius-lg);
+  padding: var(--space-2); box-shadow: var(--shadow-raised);
+}
+
+/* Functional-layer chrome (nav bar / tab bar / toolbar) — Liquid Glass-ish */
+.chrome {
+  background: var(--material-chrome-bg);
+  -webkit-backdrop-filter: var(--material-blur); backdrop-filter: var(--material-blur);
+  border-bottom: var(--hairline) solid var(--separator);
+}
+.tabbar {
+  background: var(--material-chrome-bg);
+  -webkit-backdrop-filter: var(--material-blur); backdrop-filter: var(--material-blur);
+  border-top: var(--hairline) solid var(--separator);
+}
+
+/* Honor Reduce Transparency — glass collapses to a solid surface */
+@media (prefers-reduced-transparency: reduce) {
+  .chrome, .tabbar { background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}
+
+/* Sheet */
+.sheet {
+  background: var(--bg); border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  box-shadow: var(--shadow-modal); padding-top: var(--space-1);
+}
+.sheet::before { /* grabber */
+  content: ""; display: block; width: 36px; height: 5px; border-radius: var(--radius-pill);
+  background: var(--label-tertiary); margin: 6px auto var(--space-1);
+}
+
+/* Status pill — carries meaning with TEXT + color, never color alone */
+.pill {
+  font: var(--font-caption1); font-weight: 600; padding: 3px 8px;
+  border-radius: var(--radius-pill); display: inline-flex; align-items: center; gap: 5px;
+}
+.pill.paid    { background: color-mix(in srgb, var(--green) 16%, transparent); color: var(--green); }
+.pill.overdue { background: color-mix(in srgb, var(--red) 16%, transparent); color: var(--red); }
+
+/* Honor reduced motion — never rely on motion to convey meaning */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+/* Honor Increase Contrast — the higher-contrast path for marginal defaults */
+@media (prefers-contrast: more) {
+  :root {
+    --label-secondary: var(--label);
+    --separator:       var(--separator-opaque);
+  }
+  .pill, .btn-tinted { color: var(--label); }
+  .chrome, .tabbar {
+    background: var(--bg);
+    backdrop-filter: none; -webkit-backdrop-filter: none;
+  }
+}

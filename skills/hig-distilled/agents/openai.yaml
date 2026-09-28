@@ -1,0 +1,4 @@
+interface:
+  display_name: "HIG — Distilled"
+  short_description: "Apple HIG guidance for explicit use"
+  default_prompt: "Use $hig-distilled to design or review an Apple-style interface with polished states, accessibility, and true dark mode."
